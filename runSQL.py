@@ -23,7 +23,7 @@ def main():
 
         sql_driver.multiprocess_node_sql(node_sql, cat_db_name)
     else:
-          print(__file__ + ': ERROR need at least 3 arguments to run properly (e.g. \"python3 runSQL.py cluster.cfg books.sql\")')
+          print(__file__ + ': ERROR need at least 3 arguments to run properly (e.g. \"python3 runSQL.py cfg-files/cluster.cfg sql-files/books.sql\")')
 
 if __name__ == '__main__':
     main()
