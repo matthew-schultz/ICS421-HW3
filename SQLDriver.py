@@ -43,8 +43,8 @@ class SQLDriver:
         if clustercfg is not None:
             self.cfg_dict = self.get_cfg_dict(clustercfg)
             # print(caller_file + ': cfg_dict is: ' + str(self.cfg_dict) )
-            #print('dict fields :')
-            #for x in self.cfg_dict:
+            # print('dict fields :')
+            # for x in self.cfg_dict:
             #    print(x,':',self.cfg_dict[x])
 
     def create_catalog(self, dbname):
@@ -258,15 +258,31 @@ class SQLDriver:
 
     def multiprocess_node_sql(self, node_sql, cat_db):   
         # create a pool of resources, allocating one resource for each node
-        pool = multiprocessing.Pool(int(self.cfg_dict['numnodes']))
-        node_sql_response = []
-        for current_node_num in range(1, int(self.cfg_dict['numnodes']) + 1):
-            db_host = self.cfg_dict['node' + str(current_node_num) + '.hostname']
-            db_port = int(self.cfg_dict['node' + str(current_node_num) + '.port'])
-            node_db = self.cfg_dict['node' + str(current_node_num) + '.db']
-            node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, db_port, current_node_num, cat_db, node_db, )))
-        for current_node_num in range(1, int(self.cfg_dict['numnodes']) + 1):
-            node_sql_response.pop(0).get()
+        catalog_dbname = self.cfg_dict['catalog.db']
+        catalog_tablename = "dtables"
+        num_nodes = self.count_rows_in_table(catalog_tablename, catalog_dbname)
+        try:
+            pool = multiprocessing.Pool(num_nodes)
+            node_sql_response = []
+            for current_node_num in range(1, num_nodes + 1):
+                db_host = self.cfg_dict['node' + str(current_node_num) + '.hostname']
+                db_port = int(self.cfg_dict['node' + str(current_node_num) + '.port'])
+                node_db = self.cfg_dict['node' + str(current_node_num) + '.db']
+                node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, db_port, current_node_num, cat_db, node_db, ) ) )
+            for current_node_num in range(1, num_nodes + 1):
+                node_sql_response.pop(0).get()
+        except ValueError as e:
+            print(str(e) + '\nThe catalog table "' + catalog_tablename + '" may have <1 rows; >=1 rows are required')
+
+    def count_rows_in_table(self, tablename, dbname):
+        num_nodes = 2
+        num_nodes_sql = "select count(*) from " + tablename
+        results = self.run_sql(num_nodes_sql, dbname)
+        count_string = results[1]
+        count = int(self.trim_sql_response(count_string) )
+        # print ('count_rows_in_table: ' + str(count) )
+        return count
+
 
 
     def run_sql(self, sql, dbname):
