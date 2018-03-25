@@ -275,7 +275,7 @@ class SQLDriver:
             print(str(e) + '\nThe catalog table "' + catalog_tablename + '" may have <1 rows; >=1 rows are required')
 
     def count_rows_in_table(self, tablename, dbname):
-        num_nodes = 2
+        # num_nodes = 2
         num_nodes_sql = "select count(*) from " + tablename
         results = self.run_sql(num_nodes_sql, dbname)
         count_string = results[1]
