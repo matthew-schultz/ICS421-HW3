@@ -1,4 +1,6 @@
 class ClusterDbNode:
+    # requires keyword arguments (kwargs) for database name, host, and port
+    # may also optionally include kwargs for partition column, two partition parameters, and a node id
     def __init__(self, *args, **kwargs):
         self.db_name = kwargs['db_name']
         self.host = kwargs['host']

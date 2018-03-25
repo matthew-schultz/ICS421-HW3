@@ -7,6 +7,7 @@ import socket
 import sqlite3
 import os, sys, inspect
 from antlr4 import *
+from ClusterDbNode import ClusterDbNode
 # import Error
 
 # https://stackoverflow.com/questions/279237/import-a-module-from-a-relative-path
@@ -108,6 +109,7 @@ class SQLDriver:
         print(self.caller_file +': config file "' + clustercfg + '" read successfully')
         file.close()
         return config_dict
+
 
     def get_table_name(self, data):
         tname = ''
@@ -256,23 +258,38 @@ class SQLDriver:
 
 
 
-    def multiprocess_node_sql(self, node_sql, cat_db):   
+    def multiprocess_node_sql(self, node_sql):   
         # create a pool of resources, allocating one resource for each node
         catalog_dbname = self.cfg_dict['catalog.db']
         catalog_tablename = "dtables"
         num_nodes = self.count_rows_in_table(catalog_tablename, catalog_dbname)
+        catalog_node = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
+        node1 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
+        node2 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
+        nodes = []#get_node_list_from_cat()
+        nodes.append(node1)
+        nodes.append(node2)
         try:
             pool = multiprocessing.Pool(num_nodes)
             node_sql_response = []
-            for current_node_num in range(1, num_nodes + 1):
-                db_host = self.cfg_dict['node' + str(current_node_num) + '.hostname']
-                db_port = int(self.cfg_dict['node' + str(current_node_num) + '.port'])
-                node_db = self.cfg_dict['node' + str(current_node_num) + '.db']
-                node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, db_port, current_node_num, cat_db, node_db, ) ) )
-            for current_node_num in range(1, num_nodes + 1):
-                node_sql_response.pop(0).get()
+            for current_node in nodes:
+                db_host = current_node.host# self.cfg_dict['node' + str(current_node_num) + '.hostname']
+                db_port = current_node.port# int(self.cfg_dict['node' + str(current_node_num) + '.port'])
+                db_name = current_node.db_name# self.cfg_dict['node' + str(current_node_num) + '.db']
+                print('current node info is ',db_host,db_port,db_name)
+                # node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, db_port, node_db, ) ) )
+            # for current_node in range(len(nodes)):
+                # node_sql_response.pop(0).get()
         except ValueError as e:
             print(str(e) + '\nThe catalog table "' + catalog_tablename + '" may have <1 rows; >=1 rows are required')
+
+    def get_node_list_from_cat(self, cat_node):
+        cat_table_name = 'dtables'
+        cat_sql = 'select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from ' + cat_table_name
+        cat_sql_response = send_node_sql(cat_sql , cat_node.host, cat_node.port, cat_node.db_name)
+        node_list = []
+        node_list.append(cat_sql_response)
+        return node_list
 
     def count_rows_in_table(self, tablename, dbname):
         # num_nodes = 2
@@ -317,7 +334,7 @@ class SQLDriver:
             sql_result.append('')
             return sql_result
 
-    def send_node_sql(self, node_sql, dbhost, dbport, node_num, cat_db, node_db):
+    def send_node_sql(self, node_sql, dbhost, dbport, node_db):
         print(self.caller_file + ': connecting to host ' + dbhost)
         my_socket = socket.socket()
         try:
