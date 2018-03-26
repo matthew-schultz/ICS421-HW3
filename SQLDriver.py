@@ -286,7 +286,8 @@ class SQLDriver:
     def get_node_list_from_cat(self, cat_node):
         cat_table_name = 'dtables'
         cat_sql = 'select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from ' + cat_table_name
-        cat_sql_response = send_node_sql(cat_sql , cat_node.host, cat_node.port, cat_node.db_name)
+        cat_sql_response = self.send_node_sql(cat_sql, cat_node.host, int(cat_node.port), cat_node.db_name)
+        print(cat_sql_response)
         node_list = []
         node_list.append(cat_sql_response)
         return node_list
