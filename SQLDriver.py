@@ -192,6 +192,13 @@ class SQLDriver:
             sql= sql.split(',)')[0]
         return sql
 
+    def trim_parentheses(self, string):
+        if(string.startswith('(') ):
+            string = string.split('(')[1]
+        if(string.endswith(')') ):
+            string= string.split(')')[0]
+        return string
+
     def get_node_dict_from_catalog(self, nodenum):
         node_dict = []        
         # partmtd_sql = 'SELECT partmtd from dtables WHERE nodeid=' + nodenum + ';'
@@ -237,10 +244,39 @@ class SQLDriver:
                 tuples.append(row)
         return tuples
 
+    def get_tuples_from_csv_string(self, csv_string):
+        tuples = []
+        # with open(csv_filename, newline='') as csvfile:
+        # reader = csv.reader(csv_string, delimiter='\n')
+        for line in csv_string.splitlines():
+            tuples.append(line)
+        return tuples
+
+    def get_fields_from_tuple_string(self, tuple_string):
+        fields = []
+        for field in tuple_string.split(','):
+            field = field.strip(' ')
+            #field = field.strip('"')
+            field = field.strip('\'')
+
+            fields.append(field)
+            print('field is :', field)
+        return fields
+        
+
     '''def compare_num_nodes_partitions(self):
         if(cfg_dict['numnodes'] != cfg_dict[]):
             print('')
 '''            # throw error
+
+    def get_nodes_from_tuples(self, node_tuples):
+        nodes = []
+        for node_tuple in node_tuples:
+            node_tuple = self.trim_parentheses(node_tuple)
+            fields = self.get_fields_from_tuple_string(node_tuple)
+            print('get_nodes_from_tuples current node is: ', node_tuple)
+            print('fields are ', str(fields) )
+        return nodes
 
     def partition_all(self, tuples):
         for sql_tuple in tuples:
@@ -268,8 +304,8 @@ class SQLDriver:
         node1 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
         node2 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
         nodes_string = get_node_string_from_cat()
-        # nodes = parse_node_string_to_list(nodes_string)
-        nodes = []
+        # nodes_2 = get_tuples_from_csv_string(nodes_string)
+        # nodes = []
         nodes.append(node1)
         nodes.append(node2)
         try:
@@ -292,11 +328,13 @@ class SQLDriver:
         cat_sql_response = self.send_node_sql(cat_sql, cat_node.host, int(cat_node.port), cat_node.db_name)
         if(len(cat_sql_response) > 0):
             print('get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
+            return cat_sql_response[1]
         else:
             print('get_node_string_from_cat cat_sql_response: Empty')
+            return ''
         # node_list = []
         # node_list.append(cat_sql_response)
-        return cat_sql_response
+        # return cat_sql_response
 
     def count_rows_in_table(self, tablename, dbname):
         # num_nodes = 2
