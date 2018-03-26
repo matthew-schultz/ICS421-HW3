@@ -8,6 +8,7 @@ import sqlite3
 import os, sys, inspect
 from antlr4 import *
 from ClusterDbNode import ClusterDbNode
+from io import StringIO
 # import Error
 
 # https://stackoverflow.com/questions/279237/import-a-module-from-a-relative-path
@@ -266,7 +267,9 @@ class SQLDriver:
         catalog_node = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
         node1 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
         node2 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
-        nodes = []#get_node_list_from_cat()
+        nodes_string = get_node_string_from_cat()
+        # nodes = parse_node_string_to_list(nodes_string)
+        nodes = []
         nodes.append(node1)
         nodes.append(node2)
         try:
@@ -283,14 +286,17 @@ class SQLDriver:
         except ValueError as e:
             print(str(e) + '\nThe catalog table "' + catalog_tablename + '" may have <1 rows; >=1 rows are required')
 
-    def get_node_list_from_cat(self, cat_node):
+    def get_node_string_from_cat(self, cat_node):
         cat_table_name = 'dtables'
         cat_sql = 'select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from ' + cat_table_name
         cat_sql_response = self.send_node_sql(cat_sql, cat_node.host, int(cat_node.port), cat_node.db_name)
-        print(cat_sql_response)
-        node_list = []
-        node_list.append(cat_sql_response)
-        return node_list
+        if(len(cat_sql_response) > 0):
+            print('get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
+        else:
+            print('get_node_string_from_cat cat_sql_response: Empty')
+        # node_list = []
+        # node_list.append(cat_sql_response)
+        return cat_sql_response
 
     def count_rows_in_table(self, tablename, dbname):
         # num_nodes = 2
@@ -357,9 +363,13 @@ class SQLDriver:
             dbfilename = data_arr[0]
             print(self.caller_file + ': recv msg ' + data_arr[0] + ' from host ' + dbhost)
             print(self.caller_file + ': recv sql rows' + data_arr[1] + ' from host ' + dbhost)
+            my_socket.close()
+            return data_arr
         except OSError:
             print(self.caller_file + ' failed to connect to host ' + dbhost)
-        my_socket.close()
+            my_socket.close()
+            return []
+#        my_socket.close()
 
 
     def table_is_created(self, sql):
