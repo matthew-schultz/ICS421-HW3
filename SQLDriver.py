@@ -322,22 +322,16 @@ class SQLDriver:
 
         return cat_node
 
-    def multiprocess_node_sql(self, node_sql):   
+    def multiprocess_node_sql(self, nodes, node_sql):   
         # create a pool of resources, allocating one resource for each node
-        cat_tablename = "dtables"
+        #cat_tablename = "dtables"
         #num_nodes = self.count_rows_in_table(catalog_tablename, catalog_dbname)
-        cat_node = self.get_cat_node_from_cfg()
-        cat_node_string = self.get_node_string_from_cat(cat_node)
-        print('cat_node_string is: ', cat_node_string)
+        # cat_node = self.get_cat_node_from_cfg()
+        # cat_node_string = self.get_node_string_from_cat(cat_node)
+        # print('cat_node_string is: ', cat_node_string)
         #cat_node_tuples = self.get_tuples_from_csv_string(cat_node_string)
         #cluster_nodes = self.get_nodes_from_tuples(cat_node_tuples)
-        node1 = ClusterDbNode(db_name="books.db", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
-        node2 = ClusterDbNode(db_name="books.db", host="172.17.0.4", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
-        # nodes_string = self.get_node_string_from_cat()
-        # nodes_2 = get_tuples_from_csv_string(nodes_string)
-        nodes = []
-        nodes.append(node1)
-        nodes.append(node2)
+
         try:
             pool = multiprocessing.Pool(len(nodes) )
             node_sql_response = []
@@ -350,7 +344,7 @@ class SQLDriver:
             for current_node in range(len(nodes) ):
                 node_sql_response.pop(0).get()
         except ValueError as e:
-            print(str(e) + '\nThe catalog table "' + catalog_tablename + '" may have <1 rows; >=1 rows are required')
+            print(str(e) + '\nThe catalog table may have <1 rows; >=1 rows are required')
 
     def get_node_string_from_cat(self, cat_node):
         cat_table_name = 'dtables'
