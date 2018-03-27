@@ -309,32 +309,46 @@ class SQLDriver:
         # self.run_sql(insert_sql, tablename + '.db')
         return insert_sql
 
+    def get_cat_node_from_cfg(self):
+        cat_dbname = self.cfg_dict['catalog.db']
+        cat_host = self.cfg_dict['catalog.hostname']
+        cat_port = self.cfg_dict['catalog.port']        
+        cat_node = ClusterDbNode(db_name=cat_dbname, host="172.17.0.2", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='112')
 
+        print('cat_dbname is: ',cat_dbname)
+        print('cat_host is: ',cat_host)
+        print('cat_port is: ',cat_port)
+        print('cat_node.get_insert_sql_string is: ',cat_node.get_insert_sql_string() )
+
+        return cat_node
 
     def multiprocess_node_sql(self, node_sql):   
         # create a pool of resources, allocating one resource for each node
-        catalog_dbname = self.cfg_dict['catalog.db']
-        catalog_tablename = "dtables"
-        num_nodes = self.count_rows_in_table(catalog_tablename, catalog_dbname)
-        catalog_node = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
-        node1 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
-        node2 = ClusterDbNode(db_name="mydb1", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
-        nodes_string = get_node_string_from_cat()
+        cat_tablename = "dtables"
+        #num_nodes = self.count_rows_in_table(catalog_tablename, catalog_dbname)
+        cat_node = self.get_cat_node_from_cfg()
+        cat_node_string = self.get_node_string_from_cat(cat_node)
+        print('cat_node_string is: ', cat_node_string)
+        #cat_node_tuples = self.get_tuples_from_csv_string(cat_node_string)
+        #cluster_nodes = self.get_nodes_from_tuples(cat_node_tuples)
+        node1 = ClusterDbNode(db_name="books.db", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
+        node2 = ClusterDbNode(db_name="books.db", host="172.17.0.4", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
+        # nodes_string = self.get_node_string_from_cat()
         # nodes_2 = get_tuples_from_csv_string(nodes_string)
-        # nodes = []
+        nodes = []
         nodes.append(node1)
         nodes.append(node2)
         try:
-            pool = multiprocessing.Pool(num_nodes)
+            pool = multiprocessing.Pool(len(nodes) )
             node_sql_response = []
             for current_node in nodes:
                 db_host = current_node.host# self.cfg_dict['node' + str(current_node_num) + '.hostname']
                 db_port = current_node.port# int(self.cfg_dict['node' + str(current_node_num) + '.port'])
                 db_name = current_node.db_name# self.cfg_dict['node' + str(current_node_num) + '.db']
                 print('current node info is ',db_host,db_port,db_name)
-                # node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, db_port, node_db, ) ) )
-            # for current_node in range(len(nodes)):
-                # node_sql_response.pop(0).get()
+                node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, int(db_port), db_name, ) ) )
+            for current_node in range(len(nodes) ):
+                node_sql_response.pop(0).get()
         except ValueError as e:
             print(str(e) + '\nThe catalog table "' + catalog_tablename + '" may have <1 rows; >=1 rows are required')
 
