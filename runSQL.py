@@ -30,12 +30,17 @@ def main():
             node_sql = myfile.read().replace('\n', '')
 
         # cat_db_name = sql_driver.get_cat_db()
-
+        
         # sql_driver.multiprocess_node_sql(node_sql)
         cat_node = ClusterDbNode(db_name="mycatdb.db", host="172.17.0.3", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
         cat_node_string = sql_driver.get_node_string_from_cat(cat_node)
         cat_node_tuples = sql_driver.get_tuples_from_csv_string(cat_node_string)
         cluster_nodes = sql_driver.get_nodes_from_tuples(cat_node_tuples)
+        print('len(cluster_nodes): ',len(cluster_nodes) )
+        test_node = ClusterDbNode(table_name="test_table", db_name="test_node.db", host="172.17.0.3", port="5000", part_col='test', part_param1='1', part_param2='2', part_mtd='99', node_id='111')
+        print('test_node.get_insert_sql(): ', test_node.get_insert_sql() )
+        #if(len(cluster_nodes) > 0):
+        #    print('cluster_nodes[0].get_insert_sql(): ',cluster_nodes[0].get_insert_sql() )
     else:
           print(__file__ + ': ERROR need at least 3 arguments to run properly (e.g. \"python3 runSQL.py cfg-files/cluster.cfg sql-files/books.sql\")')
 

@@ -271,11 +271,27 @@ class SQLDriver:
 
     def get_nodes_from_tuples(self, node_tuples):
         nodes = []
+        i = 1
         for node_tuple in node_tuples:
             node_tuple = self.trim_parentheses(node_tuple)
             fields = self.get_fields_from_tuple_string(node_tuple)
+            #nodeurl,partmtd,nodeid,partcol,partparam1,partparam2
+            node_url = fields[0]
+            host_and_port = node_url.split(":")
+            host = host_and_port[0]
+            port = host_and_port[1].split("/")[0]
+            db_name = host_and_port[1].split("/")[1]
+            part_mtd = fields[1]
+            node_id = fields[2]
+            part_col = fields[3]
+            part_param1 = fields[4]
+            part_param2 = fields[5]
+            node = ClusterDbNode(db_name=db_name, host=host, port=port, part_col=part_col, part_param1=part_param1, part_param2=part_param2, part_mtd=part_mtd, node_id=i)
+            nodes.append(node)
             print('get_nodes_from_tuples current node is: ', node_tuple)
             print('fields are ', str(fields) )
+            print('node dbname,host,port,partcol,partparam1,partparam2,partmtd,nodeid is ', node.db_name, node.host, node.port, node.part_col, node.part_param1, node.part_param2, node.part_mtd, node.node_id)
+            i+=1
         return nodes
 
     def partition_all(self, tuples):
