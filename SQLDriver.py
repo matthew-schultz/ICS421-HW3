@@ -302,8 +302,7 @@ class SQLDriver:
             # print('idx is ' + str(idx))
             
 
-    def insert_tuple(self, tablename, sql_tuple):            
-        # values_string = ''
+    def insert_tuple(self, tablename, sql_tuple):
         # print('tup is' + sql_tuple[0])
         insert_sql = 'INSERT into ' + tablename + ' VALUES(' + sql_tuple[0] + ');'
         # self.run_sql(insert_sql, tablename + '.db')
@@ -324,21 +323,13 @@ class SQLDriver:
 
     def multiprocess_node_sql(self, nodes, node_sql):   
         # create a pool of resources, allocating one resource for each node
-        #cat_tablename = "dtables"
-        #num_nodes = self.count_rows_in_table(catalog_tablename, catalog_dbname)
-        # cat_node = self.get_cat_node_from_cfg()
-        # cat_node_string = self.get_node_string_from_cat(cat_node)
-        # print('cat_node_string is: ', cat_node_string)
-        #cat_node_tuples = self.get_tuples_from_csv_string(cat_node_string)
-        #cluster_nodes = self.get_nodes_from_tuples(cat_node_tuples)
-
         try:
             pool = multiprocessing.Pool(len(nodes) )
             node_sql_response = []
             for current_node in nodes:
-                db_host = current_node.host# self.cfg_dict['node' + str(current_node_num) + '.hostname']
-                db_port = current_node.port# int(self.cfg_dict['node' + str(current_node_num) + '.port'])
-                db_name = current_node.db_name# self.cfg_dict['node' + str(current_node_num) + '.db']
+                db_host = current_node.host
+                db_port = current_node.port
+                db_name = current_node.db_name
                 print('current node info is ',db_host,db_port,db_name)
                 node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, int(db_port), db_name, ) ) )
             for current_node in range(len(nodes) ):
@@ -356,12 +347,9 @@ class SQLDriver:
         else:
             print('get_node_string_from_cat cat_sql_response: Empty')
             return ''
-        # node_list = []
-        # node_list.append(cat_sql_response)
-        # return cat_sql_response
+
 
     def count_rows_in_table(self, tablename, dbname):
-        # num_nodes = 2
         num_nodes_sql = "select count(*) from " + tablename
         results = self.run_sql(num_nodes_sql, dbname)
         count_string = results[1]
@@ -370,18 +358,15 @@ class SQLDriver:
         return count
 
 
-
     def run_sql(self, sql, dbname):
         print(self.caller_file + ': executing sql statement ' + sql) 
         try:
             sqlConn = sqlite3.connect(dbname)
             c = sqlConn.cursor()
-#            c.execute(sql)
             result = ''
             for row in c.execute(sql):
                 # print('str is ' + str(row))
                 result += str(row) + '\n'
-#            result = str(c.fetchall())
             sqlConn.commit()
             sqlConn.close()
             # create sql_result to store if sql was success and rows
