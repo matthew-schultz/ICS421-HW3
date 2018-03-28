@@ -31,36 +31,38 @@ def Main():
         host = sys.argv[1]
         #host = ''
         port = int(sys.argv[2])
-
         mySocket = socket.socket()
         mySocket.bind((host,port))
-        mySocket.listen(1)
-        runDDLConn, addr = mySocket.accept()
-        print (__file__ + ': Connection from ' + str(addr))
-        data = runDDLConn.recv(1024)
-        # return from Main() if no data was received
-        if not data:
-            return
-        data_arr = pickle.loads(data)
-        print(__file__ + ': Received' + repr(data_arr))
 
-        dbfilename = data_arr[0]
-        print(__file__ + ': dbfilename is ' + dbfilename)
-        ddlSQL = data_arr[1]
-        print (__file__ + ': ddlSQL is ' + ddlSQL)
+        while(len(sys.argv) >= 3):
+            mySocket.listen(1)
+            runDDLConn, addr = mySocket.accept()
+            print (__file__ + ': Connection from ' + str(addr))
+            data = runDDLConn.recv(1024)
+            # return from Main() if no data was received
+            if not data:
+                return
+            data_arr = pickle.loads(data)
+            print(__file__ + ': Received' + repr(data_arr))
 
-        sql_response = sql_driver.run_sql(ddlSQL, dbfilename)
+            dbfilename = data_arr[0]
+            print(__file__ + ': dbfilename is ' + dbfilename)
+            ddlSQL = data_arr[1]
+            print (__file__ + ': ddlSQL is ' + ddlSQL)
 
-        # response = ''#CreateTable(dbfilename, ddlSQL)
-        # if(sql_response[0] != 'failure'):
-            
-        print('parDBd: sql statement ' + sql_response[0])
-        print('parDBd: send response "' + str(sql_response) +  '" for sql "' + str(ddlSQL) + '"')
+            sql_response = sql_driver.run_sql(ddlSQL, dbfilename)
 
-        data_string = pickle.dumps(sql_response)
+            # response = ''#CreateTable(dbfilename, ddlSQL)
+            # if(sql_response[0] != 'failure'):
+                
+            print('parDBd: sql statement ' + sql_response[0])
+            print('parDBd: send response "' + str(sql_response) +  '" for sql "' + str(ddlSQL) + '"')
 
-        runDDLConn.send(data_string)
-        runDDLConn.close()
+            data_string = pickle.dumps(sql_response)
+
+            runDDLConn.send(data_string)
+            runDDLConn.close()
+
         mySocket.close()
     else:
         print("parDBd: ERROR need at least 3 arguments to run properly (e.g. \"python3 parDBd.py 172.17.0.2 5000\"")
