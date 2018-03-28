@@ -136,9 +136,9 @@ class SQLDriver:
                 statement_to_run = self.build_catalog_update_statement(current_node_num)
              #else:
              #   statement_to_run = self.build_catalog_insert_statement(current_node_num)
-            #print('statement_to_run is ', statement_to_run)        
+            print('statement_to_run is ', statement_to_run)        
             dbname = self.cfg_dict['catalog.db']
-            self.run_sql(statement_to_run, dbname)
+            # self.run_sql(statement_to_run, dbname)
 
 # this function takes the int current_node_num, creates variables for each column in dtables,
 # stores the associated cfg_dict key in the variable
