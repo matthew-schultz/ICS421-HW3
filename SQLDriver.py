@@ -29,6 +29,15 @@ if cmd_subfolder not in sys.path:
 
 from GetTablename import GetTablename
 
+class NodeNumMismatchError(Exception):
+    def __init__(self, message, errors):
+
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
+
+        # Now for your custom code...
+        self.errors = 'numnodes in clustercfg does not match number of nodes in dtables'
+
 class SQLDriver:
     '''
     Parameters
@@ -127,18 +136,22 @@ class SQLDriver:
         tname = tname.split('(')[0] #remove trailing '('
         return tname
 
-    def update_catalog(self):
-        numnodes = int(self.cfg_dict['numnodes'] )
-        for current_node_num in range(1, numnodes + 1):    
-#            print('current_node_num in update_catalog is ',current_node_num)
-            statement_to_run = ''
-            if(self.check_catalog_if_node_exists(current_node_num) == '1'):
-                statement_to_run = self.build_catalog_update_statement(current_node_num)
-             #else:
-             #   statement_to_run = self.build_catalog_insert_statement(current_node_num)
-            print('statement_to_run is ', statement_to_run)        
-            dbname = self.cfg_dict['catalog.db']
-            # self.run_sql(statement_to_run, dbname)
+    def update_catalog_with_cfg_data(self):
+        num_nodes = int(self.cfg_dict['numnodes'] )
+        nodes_in_catalog = 3
+        if num_nodes == nodes_in_catalog:
+            for current_node_num in range(1, num_nodes + 1):    
+    #            print('current_node_num in update_catalog is ',current_node_num)
+                statement_to_run = ''
+                if(self.check_catalog_if_node_exists(current_node_num) == '1'):
+                    statement_to_run = self.build_catalog_update_statement(current_node_num)
+                 #else:
+                 #   statement_to_run = self.build_catalog_insert_statement(current_node_num)
+                print('statement_to_run is ', statement_to_run)        
+                dbname = self.cfg_dict['catalog.db']
+                # self.run_sql(statement_to_run, dbname)
+        else:
+            raise NodeNumMismatchError('NodeNumMismatchError numnodes in cfg file does not match number of nodes in dtables', None)
 
 # this function takes the int current_node_num, creates variables for each column in dtables,
 # stores the associated cfg_dict key in the variable

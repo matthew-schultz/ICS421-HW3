@@ -75,12 +75,13 @@ def trim_partmtd(partmtd):
 def main():
     if(len(sys.argv) >= 3):
         try:
-            print(__file__,': executing loadCSV')
+            print(__file__+': executing loadCSV')
             clustercfg = sys.argv[1]
             csvfile = sys.argv[2]
             sql_driver = SQLDriver.SQLDriver(__file__, clustercfg)
+            cat_node = sql_driver.get_cat_node_from_cfg()
 
-            sql_driver.update_catalog()           
+            sql_driver.update_catalog_with_cfg_data()        
 
             # def load_csv(self, db, table, csv):
             response_list = []
@@ -93,11 +94,11 @@ def main():
                 # print('current_node_num is :', current_node_num)
                 if(partmtd == 0):
                     print('send to every node')
-                    print('tuples are ' + str(tuples))
+                    print('tuples are ' + str(tuples) )
                     #sql_driver.partition_all(tuples)
                 elif(partmtd == 1):
                     print('send if value fits in node range')
-                    print('tuples are ' + str(tuples))
+                    print('tuples are ' + str(tuples) )
                     #sql_driver.partition_range(tuples)
                 elif(partmtd == 2):
                     print('mod value and send if mod matches node num')
@@ -111,9 +112,11 @@ def main():
 
 
         except FileNotFoundError as e:
-            print(__file__ + ': ' + str(e))
+            print(__file__ + ': ' + str(e) )
         except KeyError as e:
-            print(__file__ + ':KeyError Your config file may be missing a value like ' + str(e))
+            print(__file__ + ': KeyError Your config file may be missing a value like ' + str(e) )
+        except SQLDriver.NodeNumMismatchError as e:
+            print(__file__ + ': ' + str(e) )
     else:
         print(__file__ + ': ERROR need at least 2 arguments to run properly (e.g. \"python3 loadCSV.py cluster.cfg books.csv\"')
 
