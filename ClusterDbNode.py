@@ -21,7 +21,6 @@ class ClusterDbNode:
     # 'books', 'com.ibm.db2.jcc.DB2Driver','10.0.0.2:5000/mydb1','db2inst1', 'mypasswd', 1,1,'age',1,2
     # table_name, nodedriver, host:port/db_name, nodeuser, nodepasswd, partmtd, node_id, part_col, part_param1, partparam2 
     def get_insert_sql_string(self):
-        print('squad')
         sql = 'INSERT into dtables VALUES('
         try: #table_name
             sql += '"' + self.table_name + '"' +  ','

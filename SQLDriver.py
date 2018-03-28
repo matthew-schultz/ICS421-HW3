@@ -256,11 +256,9 @@ class SQLDriver:
         fields = []
         for field in tuple_string.split(','):
             field = field.strip(' ')
-            #field = field.strip('"')
             field = field.strip('\'')
-
             fields.append(field)
-            print('field is :', field)
+            #print('field is :', field)
         return fields
         
 
@@ -275,7 +273,6 @@ class SQLDriver:
         for node_tuple in node_tuples:
             node_tuple = self.trim_parentheses(node_tuple)
             fields = self.get_fields_from_tuple_string(node_tuple)
-            #nodeurl,partmtd,nodeid,partcol,partparam1,partparam2
             node_url = fields[0]
             host_and_port = node_url.split(":")
             host = host_and_port[0]
@@ -288,9 +285,9 @@ class SQLDriver:
             part_param2 = fields[5]
             node = ClusterDbNode(db_name=db_name, host=host, port=port, part_col=part_col, part_param1=part_param1, part_param2=part_param2, part_mtd=part_mtd, node_id=i)
             nodes.append(node)
-            print('get_nodes_from_tuples current node is: ', node_tuple)
-            print('fields are ', str(fields) )
-            print('node dbname,host,port,partcol,partparam1,partparam2,partmtd,nodeid is ', node.db_name, node.host, node.port, node.part_col, node.part_param1, node.part_param2, node.part_mtd, node.node_id)
+            #print('get_nodes_from_tuples current node is: ', node_tuple)
+            #print('fields are ', str(fields) )
+            #print('node dbname,host,port,partcol,partparam1,partparam2,partmtd,nodeid is ', node.db_name, node.host, node.port, node.part_col, node.part_param1, node.part_param2, node.part_mtd, node.node_id)
             i+=1
         return nodes
 
@@ -313,12 +310,10 @@ class SQLDriver:
         cat_host = self.cfg_dict['catalog.hostname']
         cat_port = self.cfg_dict['catalog.port']        
         cat_node = ClusterDbNode(db_name=cat_dbname, host="172.17.0.2", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='112')
-
-        print('cat_dbname is: ',cat_dbname)
+        '''print('cat_dbname is: ',cat_dbname)
         print('cat_host is: ',cat_host)
         print('cat_port is: ',cat_port)
-        print('cat_node.get_insert_sql_string is: ',cat_node.get_insert_sql_string() )
-
+        print('cat_node.get_insert_sql_string is: ',cat_node.get_insert_sql_string() )'''
         return cat_node
 
     def multiprocess_node_sql(self, nodes, node_sql):   
@@ -330,7 +325,7 @@ class SQLDriver:
                 db_host = current_node.host
                 db_port = current_node.port
                 db_name = current_node.db_name
-                print('current node info is ',db_host,db_port,db_name)
+                #print('current node info is ',db_host,db_port,db_name)
                 node_sql_response.append(pool.apply_async(self.send_node_sql, (node_sql, db_host, int(db_port), db_name, ) ) )
             for current_node in range(len(nodes) ):
                 node_sql_response.pop(0).get()
@@ -342,10 +337,10 @@ class SQLDriver:
         cat_sql = 'select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from ' + cat_table_name
         cat_sql_response = self.send_node_sql(cat_sql, cat_node.host, int(cat_node.port), cat_node.db_name)
         if(len(cat_sql_response) > 0):
-            print('get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
+            print(self.caller_file,': get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
             return cat_sql_response[1]
         else:
-            print('get_node_string_from_cat cat_sql_response: Empty')
+            print(self.caller_file,': get_node_string_from_cat cat_sql_response: Empty')
             return ''
 
 
@@ -413,7 +408,7 @@ class SQLDriver:
             my_socket.close()
             return data_arr
         except OSError:
-            print(self.caller_file + ' failed to connect to host ' + dbhost)
+            print(self.caller_file + ': failed to connect to host ' + dbhost)
             my_socket.close()
             return []
 #        my_socket.close()
