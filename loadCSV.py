@@ -96,7 +96,7 @@ def main():
                     print('send to every node')
                     print('tuples are ' + str(tuples) )
                     #sql_driver.partition_all(tuples)
-                elif(partmtd == 1):
+                elif(sql_driver.cfg_dict['partition.method'] == 'range'):
                     print('send if value fits in node range')
                     print('tuples are ' + str(tuples) )
                     #sql_driver.partition_range(tuples)

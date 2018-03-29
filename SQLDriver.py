@@ -113,7 +113,7 @@ class SQLDriver:
                     print('configPort is ' + configPort)
                     print('configDb is ' + configDb)'''        
                     config_dict[nodename + '.port'] = configPort
-                    config_dict[nodename + '.db'] = configDb + '.db'
+                    config_dict[nodename + '.db'] = configDb #+ '.db'
                     configValue = configIP
                 config_dict[config_key]=configValue
         print(self.caller_file +': config file "' + clustercfg + '" read successfully')
@@ -157,7 +157,7 @@ class SQLDriver:
 # stores the associated cfg_dict key in the variable
 # adds a 'colname=colvalue,' section to the update statement string if it exists in the cfg_dict
     def build_catalog_update_statement(self, current_node_num):
-        statement = 'update dtables set '
+        '''statement = 'update dtables set '
         node = 'node' + str(current_node_num)
         partmtd = 'partition.method'
         partparam1 = 'partition.' + node + '.param1'
@@ -179,7 +179,24 @@ class SQLDriver:
         if ', where' in statement:
             statement = statement.replace(', where', ' where')
         # print(',where removed is ', statement)
-        return statement                            
+        return statement'''
+        statement = 'update dtables set '
+        if(cfg_dict['partition.method'] == 'range'):
+            #tablename=books
+            statement += 'tablename="' + cfg_dict['tablename'] + '",'
+            #partition.method=range
+            statement += 'partmtd=1,'
+            #partition.column=age
+            statement += 'partcol="' + cfg_dict['partition.column'] + '",'
+            #partition.node1.param1=1
+            partparam1 = 'partition.node' + current_node_num + '.param1'
+            statement += 'partparam1="' + cfg_dict[partparam1] + '",'
+            #partition.node1.param2=10
+            partparam2 = 'partition.node' + current_node_num + '.param2'
+            statement += 'partparam2="' + cfg_dict[partparam2] + '",'
+        return statement
+
+
 
     def build_catalog_insert_statement(self, node_num):
         statement = 'insert dtables'
