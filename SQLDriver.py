@@ -138,15 +138,19 @@ class SQLDriver:
 
     def update_catalog_with_cfg_data(self):
         num_nodes = int(self.cfg_dict['numnodes'] )
-        nodes_in_catalog = 3
+        nodes_in_catalog = 2
+        print("marker")        
         if num_nodes == nodes_in_catalog:
             for current_node_num in range(1, num_nodes + 1):    
     #            print('current_node_num in update_catalog is ',current_node_num)
                 statement_to_run = ''
-                if(self.check_catalog_if_node_exists(current_node_num) == '1'):
-                    statement_to_run = self.build_catalog_update_statement(current_node_num)
-                 #else:
-                 #   statement_to_run = self.build_catalog_insert_statement(current_node_num)
+                try:
+                    if(self.check_catalog_if_node_exists(current_node_num) == '1'):
+                        statement_to_run = self.build_catalog_update_statement(current_node_num)
+                    else:
+                        raise NodeNumMismatchError(self.caller_file +': NodeNumMismatchError node id:' + str(current_node_num) + ' was not found', None)
+                except NodeNumMismatchError as e:
+                    print(str(e) )
                 print('statement_to_run is ', statement_to_run)        
                 dbname = self.cfg_dict['catalog.db']
                 # self.run_sql(statement_to_run, dbname)
@@ -181,19 +185,20 @@ class SQLDriver:
         # print(',where removed is ', statement)
         return statement'''
         statement = 'update dtables set '
-        if(cfg_dict['partition.method'] == 'range'):
+        if(self.cfg_dict['partition.method'] == 'range'):
             #tablename=books
-            statement += 'tablename="' + cfg_dict['tablename'] + '",'
+            statement += 'tname="' + self.cfg_dict['tablename'] + '",'
             #partition.method=range
             statement += 'partmtd=1,'
             #partition.column=age
-            statement += 'partcol="' + cfg_dict['partition.column'] + '",'
+            statement += 'partcol="' + self.cfg_dict['partition.column'] + '",'
             #partition.node1.param1=1
-            partparam1 = 'partition.node' + current_node_num + '.param1'
-            statement += 'partparam1="' + cfg_dict[partparam1] + '",'
+            partparam1 = 'partition.node' + str(current_node_num) + '.param1'
+            statement += 'partparam1="' + self.cfg_dict[partparam1] + '",'
             #partition.node1.param2=10
-            partparam2 = 'partition.node' + current_node_num + '.param2'
-            statement += 'partparam2="' + cfg_dict[partparam2] + '",'
+            partparam2 = 'partition.node' + str(current_node_num) + '.param2'
+            statement += 'partparam2="' + self.cfg_dict[partparam2] + '"'
+            statement += ' where nodeid=' + str(current_node_num) + ';'
         return statement
 
 
