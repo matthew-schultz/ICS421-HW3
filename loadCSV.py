@@ -79,9 +79,9 @@ def main():
             clustercfg = sys.argv[1]
             csvfile = sys.argv[2]
             sql_driver = SQLDriver.SQLDriver(__file__, clustercfg)
-            cat_node = sql_driver.get_cat_node_from_cfg()
+            #cat_node = sql_driver.get_cat_node_from_cfg()
 
-            sql_driver.update_catalog_with_cfg_data()        
+            sql_driver.update_catalog_with_cfg_data()
 
             # def load_csv(self, db, table, csv):
             response_list = []
@@ -92,19 +92,16 @@ def main():
                 # partmtd = trim_partmtd(partmtd)
 
                 # print('current_node_num is :', current_node_num)
-                if(partmtd == 0):
-                    print('send to every node')
-                    print('tuples are ' + str(tuples) )
-                    #sql_driver.partition_all(tuples)
-                elif(sql_driver.cfg_dict['partition.method'] == 'range'):
+                if(sql_driver.cfg_dict['partition.method'] == 'range'):
                     print('send if value fits in node range')
                     print('tuples are ' + str(tuples) )
-                    #sql_driver.partition_range(tuples)
-                elif(partmtd == 2):
+                    
+                elif(sql_driver.cfg_dict['partition.method'] == 'hash'):
                     print('mod value and send if mod matches node num')
                     #sql_driver.partition_hash(tuples)
                 else:
-                    print(__file__ + 'node ' + str(current_node_num) + ' returned an invalid partmtd value')
+                    print('send to every node')
+                    print('tuples are ' + str(tuples) )
 
             #tests(sql_driver)
 

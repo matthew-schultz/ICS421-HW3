@@ -138,8 +138,12 @@ class SQLDriver:
 
     def update_catalog_with_cfg_data(self):
         num_nodes = int(self.cfg_dict['numnodes'] )
-        nodes_in_catalog = 2
-        print("marker")        
+
+        cat_node = self.get_cat_node_from_cfg()
+        cat_node_string = self.get_node_string_from_cat(cat_node)
+        cat_node_tuples = self.get_tuples_from_csv_string(cat_node_string)
+        cluster_nodes = self.get_nodes_from_tuples(cat_node_tuples)
+        nodes_in_catalog = len(cluster_nodes)
         if num_nodes == nodes_in_catalog:
             for current_node_num in range(1, num_nodes + 1):    
     #            print('current_node_num in update_catalog is ',current_node_num)
@@ -147,11 +151,13 @@ class SQLDriver:
                 try:
                     if(self.check_catalog_if_node_exists(current_node_num) == '1'):
                         statement_to_run = self.build_catalog_update_statement(current_node_num)
+                        print('''self.caller_file +''' 'statement_to_run, cat_node.host, cat_node.port, cat_node.db_name contents are: ',statement_to_run, cat_node.host, cat_node.port, cat_node.db_name)
+                        self.send_node_sql(statement_to_run, cat_node.host, int(cat_node.port), cat_node.db_name)
                     else:
-                        raise NodeNumMismatchError(self.caller_file +': NodeNumMismatchError node id:' + str(current_node_num) + ' was not found', None)
+                        raise NodeNumMismatchError(self.caller_file +': NodeNumMismatchError node with nodeid:' + str(current_node_num) + ' was not found in catalog', None)
                 except NodeNumMismatchError as e:
                     print(str(e) )
-                print('statement_to_run is ', statement_to_run)        
+                print(self.caller_file +': updating catalog node '+ str(current_node_num) + ' with sql statement ' + statement_to_run)        
                 dbname = self.cfg_dict['catalog.db']
                 # self.run_sql(statement_to_run, dbname)
         else:
@@ -185,6 +191,7 @@ class SQLDriver:
         # print(',where removed is ', statement)
         return statement'''
         statement = 'update dtables set '
+        #try
         if(self.cfg_dict['partition.method'] == 'range'):
             #tablename=books
             statement += 'tname="' + self.cfg_dict['tablename'] + '",'
@@ -197,8 +204,32 @@ class SQLDriver:
             statement += 'partparam1="' + self.cfg_dict[partparam1] + '",'
             #partition.node1.param2=10
             partparam2 = 'partition.node' + str(current_node_num) + '.param2'
-            statement += 'partparam2="' + self.cfg_dict[partparam2] + '"'
+            statement += 'partparam2="' + self.cfg_dict[partparam2] + '",'
+            #null fields and end
+            statement += 'partcol=NULL'
             statement += ' where nodeid=' + str(current_node_num) + ';'
+        elif(self.cfg_dict['partition.method'] == 'hash'):
+            #tablename=books
+            statement += 'tname="' + self.cfg_dict['tablename'] + '",'
+            #partition.method=hash
+            statement += 'partmtd=2,'
+            #partition.column=age
+            statement += 'partcol="' + self.cfg_dict['partition.column'] + '",'
+            #partition.param1=2
+            statement += 'partparam1="' + self.cfg_dict['partition.param1'] + '",'
+            #null fields and end
+            statement += 'partparam2=NULL'
+            statement += ' where nodeid=' + str(current_node_num) + ';'
+        else: #run if partition method is not range or hash
+            #tablename=books
+            statement += 'tname="' + self.cfg_dict['tablename'] + '",'
+            #partition.method=hash
+            statement += 'partmtd=0,'
+            #null fields and end
+            statement += 'partparam1=NULL, partparam2=NULL, partcol=NULL'
+            statement += ' where nodeid=' + str(current_node_num) + ';'
+        #except KeyError
+            
         return statement
 
 
@@ -375,7 +406,7 @@ class SQLDriver:
             print(self.caller_file,': get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
             return cat_sql_response[1]
         else:
-            print(self.caller_file,': get_node_string_from_cat cat_sql_response: Empty')
+            print(self.caller_file + ': get_node_string_from_cat cat_sql_response: Empty')
             return ''
 
 
