@@ -167,29 +167,6 @@ class SQLDriver:
 # stores the associated cfg_dict key in the variable
 # adds a 'colname=colvalue,' section to the update statement string if it exists in the cfg_dict
     def build_catalog_update_statement(self, current_node_num):
-        '''statement = 'update dtables set '
-        node = 'node' + str(current_node_num)
-        partmtd = 'partition.method'
-        partparam1 = 'partition.' + node + '.param1'
-        partparam2 = 'partition.' + node + '.param2'
-        partcol = 'partition.column'
-        if partcol in self.cfg_dict:
-            statement+= 'partcol' + '="' + self.cfg_dict[partcol] + '",'
-        if partmtd in self.cfg_dict:
-            # partmtd string in cfg must be converted to int code (0,1,2)
-            statement+= 'partmtd' + '=' + str(self.partcol_dict[self.cfg_dict[partmtd] ] ) + ','
-        else:
-            statement+= 'partmtd=0,'
-        if partparam1 in self.cfg_dict:
-            statement+= 'partparam1' + '=' + self.cfg_dict[partparam2] + ','
-        if partparam2 in self.cfg_dict:
-            statement+= 'partparam2' + '=' + self.cfg_dict[partparam2] + ','
-        statement += ' where nodeid=' + str(current_node_num) + ';'
-        #remove trailing comma that breaks sql query
-        if ', where' in statement:
-            statement = statement.replace(', where', ' where')
-        # print(',where removed is ', statement)
-        return statement'''
         statement = 'update dtables set '
         #check if partition.method exists
         #try
@@ -229,19 +206,8 @@ class SQLDriver:
             statement += 'partparam1="' + self.cfg_dict['partition.param1'] + '",'
             #null fields and end
             statement += 'partparam2=NULL'
-            statement += ' where nodeid=' + str(current_node_num) + ';'
-        '''else: #run if partition method is not range or hash
-            #tablename=books
-            statement += 'tname="' + self.cfg_dict['tablename'] + '",'
-            #partition.method=hash
-            statement += 'partmtd=0,'
-            #null fields and end
-            statement += 'partparam1=NULL, partparam2=NULL, partcol=NULL'
-            statement += ' where nodeid=' + str(current_node_num) + ';'''
-        #except KeyError
-            
+            statement += ' where nodeid=' + str(current_node_num) + ';'            
         return statement
-
 
 
     def build_catalog_insert_statement(self, node_num):
@@ -374,16 +340,25 @@ class SQLDriver:
             print('insert is ',insert_sql)
             # print('idx is ' + str(idx))
             
-
-    def insert_tuple(self, tablename, sql_tuple):
+    # db_port is int
+    def insert_tuple_into_node_table(self, node, table_name, tuple_list):
         # print('tup is' + sql_tuple[0])
-        insert_sql = 'INSERT into ' + tablename + ' VALUES(' + sql_tuple[0] + ');'
-        # self.run_sql(insert_sql, tablename + '.db')
+        insert_sql = 'INSERT into ' + table_name + ' VALUES(' 
+        for column_iterator in range(len(tuple_list) ):
+            insert_sql += tuple_list[column_iterator]
+            if(column_iterator < len(tuple_list) - 1):
+                 insert_sql += ','
+        insert_sql += ');'
+        #node.host, node.port, node.db_name
+        #self.send_node_sql(insert_sql, node.host, int(node.port), node.db_name)
+        print('insert_sql is ' + insert_sql)
         return insert_sql
 
+    # db_port is int
     def insert_csv_tuples_into_node_table(self, node, table_name, csv_tuples):
-        for csv_tuple in tuples:
+        for csv_tuple in csv_tuples:
             print('csv_tuple is: ' + str(csv_tuple) )
+            self.insert_tuple_into_node_table(node, table_name, csv_tuple)
 
     def get_cat_node_from_cfg(self):
         cat_dbname = self.cfg_dict['catalog.db']
