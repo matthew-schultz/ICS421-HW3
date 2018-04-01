@@ -139,20 +139,20 @@ class SQLDriver:
     def update_catalog_with_cfg_data(self):
         num_nodes = int(self.cfg_dict['numnodes'] )
 
-        cat_node = self.get_cat_node_from_cfg()
-        cat_node_string = self.get_node_string_from_cat(cat_node)
+        self.cat_node = self.get_cat_node_from_cfg()
+        cat_node_string = self.get_node_string_from_cat(self.cat_node)
         cat_node_tuples = self.get_tuples_from_csv_string(cat_node_string)
-        cluster_nodes = self.get_nodes_from_tuples(cat_node_tuples)
-        nodes_in_catalog = len(cluster_nodes)
-        if num_nodes == nodes_in_catalog:
+        self.cluster_nodes = self.get_nodes_from_tuples(cat_node_tuples)
+        self.cluster_node_count = len(self.cluster_nodes)
+        if num_nodes == self.cluster_node_count:
             for current_node_num in range(1, num_nodes + 1):    
     #            print('current_node_num in update_catalog is ',current_node_num)
                 statement_to_run = ''
                 try:
                     if(self.check_catalog_if_node_exists(current_node_num) == '1'):
                         statement_to_run = self.build_catalog_update_statement(current_node_num)
-                        print('''self.caller_file +''' 'statement_to_run, cat_node.host, cat_node.port, cat_node.db_name contents are: ',statement_to_run, cat_node.host, cat_node.port, cat_node.db_name)
-                        self.send_node_sql(statement_to_run, cat_node.host, int(cat_node.port), cat_node.db_name)
+                        print('''self.caller_file +''' 'statement_to_run, cat_node.host, cat_node.port, cat_node.db_name contents are: ',statement_to_run, self.cat_node.host, self.cat_node.port, self.cat_node.db_name)
+                        self.send_node_sql(statement_to_run, self.cat_node.host, int(self.cat_node.port), self.cat_node.db_name)
                     else:
                         raise NodeNumMismatchError(self.caller_file +': NodeNumMismatchError node with nodeid:' + str(current_node_num) + ' was not found in catalog', None)
                 except NodeNumMismatchError as e:
@@ -191,8 +191,18 @@ class SQLDriver:
         # print(',where removed is ', statement)
         return statement'''
         statement = 'update dtables set '
+        #check if partition.method exists
         #try
-        if(self.cfg_dict['partition.method'] == 'range'):
+        if('partition.method' not in self.cfg_dict.keys() or (self.cfg_dict['partition.method'] != 'range' and self.cfg_dict['partition.method'] != 'hash') ):
+            #print ('yay it\'s not in keys')
+            #tablename=books
+            statement += 'tname="' + self.cfg_dict['tablename'] + '",'
+            #partition.method=hash
+            statement += 'partmtd=0,'
+            #null fields and end
+            statement += 'partparam1=NULL, partparam2=NULL, partcol=NULL'
+            statement += ' where nodeid=' + str(current_node_num) + ';'
+        elif(self.cfg_dict['partition.method'] == 'range'):
             #tablename=books
             statement += 'tname="' + self.cfg_dict['tablename'] + '",'
             #partition.method=range
@@ -220,14 +230,14 @@ class SQLDriver:
             #null fields and end
             statement += 'partparam2=NULL'
             statement += ' where nodeid=' + str(current_node_num) + ';'
-        else: #run if partition method is not range or hash
+        '''else: #run if partition method is not range or hash
             #tablename=books
             statement += 'tname="' + self.cfg_dict['tablename'] + '",'
             #partition.method=hash
             statement += 'partmtd=0,'
             #null fields and end
             statement += 'partparam1=NULL, partparam2=NULL, partcol=NULL'
-            statement += ' where nodeid=' + str(current_node_num) + ';'
+            statement += ' where nodeid=' + str(current_node_num) + ';'''
         #except KeyError
             
         return statement
@@ -370,6 +380,10 @@ class SQLDriver:
         insert_sql = 'INSERT into ' + tablename + ' VALUES(' + sql_tuple[0] + ');'
         # self.run_sql(insert_sql, tablename + '.db')
         return insert_sql
+
+    def insert_csv_tuples_into_node_table(self, node, table_name, csv_tuples):
+        for csv_tuple in tuples:
+            print('csv_tuple is: ' + str(csv_tuple) )
 
     def get_cat_node_from_cfg(self):
         cat_dbname = self.cfg_dict['catalog.db']

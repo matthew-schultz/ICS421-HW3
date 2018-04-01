@@ -79,29 +79,35 @@ def main():
             clustercfg = sys.argv[1]
             csvfile = sys.argv[2]
             sql_driver = SQLDriver.SQLDriver(__file__, clustercfg)
-            #cat_node = sql_driver.get_cat_node_from_cfg()
 
+            #also initializes sql_driver member variables: cat_node, cluster_nodes, cat_node_count
             sql_driver.update_catalog_with_cfg_data()
 
-            # def load_csv(self, db, table, csv):
-            response_list = []
-            tuples = sql_driver.get_tuples_from_csv(csvfile)
+            # response_list = []
+            csv_tuples = sql_driver.get_tuples_from_csv(csvfile)
+
+
+            #g = GetTablename()
+            #tablename = g.get_tablename(sql_filename)
+            #print('tablename test result is ', tablename)
 
             for current_node_num in range(1, int(sql_driver.cfg_dict['numnodes']) + 1):
-                partmtd = sql_driver.get_partmtd()
-                # partmtd = trim_partmtd(partmtd)
+                if 'partition.method' in sql_driver.cfg_dict.keys():
+                    partition_method = sql_driver.cfg_dict['partition.method']
+                    # partmtd = trim_partmtd(partmtd)
 
-                # print('current_node_num is :', current_node_num)
-                if(sql_driver.cfg_dict['partition.method'] == 'range'):
-                    print('send if value fits in node range')
-                    print('tuples are ' + str(tuples) )
-                    
-                elif(sql_driver.cfg_dict['partition.method'] == 'hash'):
-                    print('mod value and send if mod matches node num')
-                    #sql_driver.partition_hash(tuples)
+                    # print('current_node_num is :', current_node_num)
+                    if(sql_driver.cfg_dict['partition.method'] == 'range'):
+                        print('send if value fits in node range')
+                        print('tuples are ' + str(csv_tuples) )
+                        
+                    elif(sql_driver.cfg_dict['partition.method'] == 'hash'):
+                        print('mod value and send if mod matches node num')
+                        #sql_driver.partition_hash(tuples)
                 else:
                     print('send to every node')
-                    print('tuples are ' + str(tuples) )
+                    print('tuples are ' + str(csv_tuples) )
+                    #insert_csv_tuples_into_node_table(self, node, table_name, csv_tuples)
 
             #tests(sql_driver)
 
