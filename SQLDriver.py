@@ -339,8 +339,8 @@ class SQLDriver:
             insert_sql = 'INSERT into ' + self.cfg_dict['tablename'] + ' VALUES(' + sql_tuple[0] + ');'
             print('insert is ',insert_sql)
             # print('idx is ' + str(idx))
-            
-    # db_port is int
+
+    #tuple must be a list of values in a row in the given table; builds a sql insert statement            
     def insert_tuple_into_node_table(self, node, table_name, tuple_list):
         # print('tup is' + sql_tuple[0])
         insert_sql = 'INSERT into ' + table_name + ' VALUES(' 
@@ -350,15 +350,15 @@ class SQLDriver:
                  insert_sql += ','
         insert_sql += ');'
         #node.host, node.port, node.db_name
-        #self.send_node_sql(insert_sql, node.host, int(node.port), node.db_name)
+        self.send_node_sql(insert_sql, node.host, int(node.port), node.db_name)
         print('insert_sql is ' + insert_sql)
         return insert_sql
 
-    # db_port is int
     def insert_csv_tuples_into_node_table(self, node, table_name, csv_tuples):
         for csv_tuple in csv_tuples:
             print('csv_tuple is: ' + str(csv_tuple) )
             self.insert_tuple_into_node_table(node, table_name, csv_tuple)
+        
 
     def get_cat_node_from_cfg(self):
         cat_dbname = self.cfg_dict['catalog.db']

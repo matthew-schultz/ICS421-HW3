@@ -85,29 +85,9 @@ def main():
 
             # response_list = []
             csv_tuples = sql_driver.get_tuples_from_csv(csvfile)
-
-
             #g = GetTablename()
             #tablename = g.get_tablename(sql_filename)
             #print('tablename test result is ', tablename)
-
-            '''for current_node_num in range(1, int(sql_driver.cfg_dict['numnodes']) + 1):
-                if 'partition.method' in sql_driver.cfg_dict.keys():
-                    partition_method = sql_driver.cfg_dict['partition.method']
-                    # partmtd = trim_partmtd(partmtd)
-
-                    # print('current_node_num is :', current_node_num)
-                    if(sql_driver.cfg_dict['partition.method'] == 'range'):
-                        print('send if value fits in node range')
-                        print('tuples are ' + str(csv_tuples) )
-                        
-                    elif(sql_driver.cfg_dict['partition.method'] == 'hash'):
-                        print('mod value and send if mod matches node num')
-                        #sql_driver.partition_hash(tuples)
-                else:
-                    print('send to every node')
-                    print('tuples are ' + str(csv_tuples) )
-                    #sql_driver.insert_csv_tuples_into_node_table(node, table_name, csv_tuples)'''
 
             for current_node in sql_driver.cluster_nodes:
                 if 'partition.method' in sql_driver.cfg_dict.keys():
@@ -118,10 +98,32 @@ def main():
                     if(sql_driver.cfg_dict['partition.method'] == 'range'):
                         print('send if value fits in node range')
                         print('tuples are ' + str(csv_tuples) )
-                        
+                        #sql_driver.insert_csv_tuples_into_node_table(current_node, 'books', csv_tuples)
+                        #tuple_iterator = 0
+                        for csv_tuple in csv_tuples:
+                            print('csv_tuple[0],[1],[2] : ' + csv_tuple[0] + ',')
+                            csv_tuple_list = sql_driver.get_fields_from_tuple_string(csv_tuple[0])
+                            #get nodeid
+                            print('current_node.node_id: ' + str(current_node.node_id) )
+                            #get partparams from cfg_dict using nodeid
+                            curr_node_id = str(current_node.node_id)
+                            curr_param1 = int(sql_driver.cfg_dict['partition.node'+ curr_node_id + '.param1'])
+                            curr_param2 = int(sql_driver.cfg_dict['partition.node'+ curr_node_id + '.param2'])  
+                            print('curr_node_id,curr_param1,curr_param2, csv_tuple[0]: ' + curr_node_id + ', ' + str(curr_param1) + ', ' + str(curr_param2) + ', ' + csv_tuple[0])
+                            #partparam1 < partcol <= partparam2
+                            part_col_value = int(csv_tuple_list[0])
+                            print('part_col_value is: ' + str(part_col_value) )
+                            if(curr_param1 < part_col_value <= curr_param2):
+                                #insert_tuple(node)
+                                #insert_tuple_into_node_table(self, current_node, sql_driver.cfg_dict['tablename'], csv_tuple[tuple_iterator]):
+                                print('insert csv_tuple ' + str(csv_tuple_list) + ' into node')
+                            else:
+                                print('did not insert csv_tuple ' + str(csv_tuple_list) + ' into node')
+                            #tuple_iterator += 1
                     elif(sql_driver.cfg_dict['partition.method'] == 'hash'):
                         print('mod value and send if mod matches node num')
                         #sql_driver.partition_hash(tuples)
+                        #sql_driver.insert_csv_tuples_into_node_table(current_node, 'books', csv_tuples)
                 else:
                     print('send to every node')
                     #print('tuples are ' + str(csv_tuples) )
