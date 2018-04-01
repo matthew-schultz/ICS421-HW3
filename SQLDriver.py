@@ -392,10 +392,10 @@ class SQLDriver:
         cat_sql = 'select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from ' + cat_table_name
         cat_sql_response = self.send_node_sql(cat_sql, cat_node.host, int(cat_node.port), cat_node.db_name)
         if(len(cat_sql_response) > 0):
-            print(self.caller_file,': get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
+            #print(self.caller_file,': get_node_string_from_cat cat_sql_response:\n',cat_sql_response[1])
             return cat_sql_response[1]
         else:
-            print(self.caller_file + ': get_node_string_from_cat cat_sql_response: Empty')
+            #print(self.caller_file + ': get_node_string_from_cat cat_sql_response: Empty')
             return ''
 
 
