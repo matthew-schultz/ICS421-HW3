@@ -49,9 +49,7 @@ def load_csv(clustercfg, csvfile, sql_driver):
                     if(node_id_from_hash in hash_node_dict):
                         #print(str(node_id_from_hash) + ' is in hash_node_dict' + ', part_param1 value is ' + hash_node_dict[node_id_from_hash].part_param1)
                         sql_driver.insert_tuple_into_node_table(hash_node_dict[node_id_from_hash], sql_driver.cfg_dict['tablename'], csv_tuple_list)
-                    print('part_param1, part_col_value, node_id_from_hash: ' + str(part_param1) + ',' + str(part_col_value) + ',' + str(node_id_from_hash) )
-                #sql_driver.partition_hash(tuples)
-                    #sql_driver.insert_csv_tuples_into_node_table(current_node, 'books', csv_tuples)
+                    #print('part_param1, part_col_value, node_id_from_hash: ' + str(part_param1) + ',' + str(part_col_value) + ',' + str(node_id_from_hash) )
         else:
             print('send to every node')
             for current_node in sql_driver.cluster_nodes:
@@ -79,6 +77,7 @@ def main():
             print('load csv file')
             csvfile = sys.argv[2]
             load_csv(clustercfg, csvfile, sql_driver)
+        #operation is detected from the SQL statement in sqlfile if no tablename in config
         else:
             print('run sql file')
             node_sql = sys.argv[2]

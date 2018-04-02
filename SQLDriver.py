@@ -54,9 +54,9 @@ class SQLDriver:
         if clustercfg is not None:
             self.cfg_dict = self.get_cfg_dict(clustercfg)
             # print(caller_file + ': cfg_dict is: ' + str(self.cfg_dict) )
-            print('dict fields :')
+            '''print('dict fields :')
             for x in self.cfg_dict:
-                print(x,':',self.cfg_dict[x])
+                print(x,':',self.cfg_dict[x])'''
 
     def create_catalog(self, dbname):
         sqlConn = sqlite3.connect(dbname)
@@ -151,7 +151,6 @@ class SQLDriver:
                 try:
                     if(self.check_catalog_if_node_exists(current_node_num) == '1'):
                         statement_to_run = self.build_catalog_update_statement(current_node_num)
-                        print('***VULGARITY***')
                         #print('''self.caller_file +''' 'statement_to_run, cat_node.host, cat_node.port, cat_node.db_name contents are: ',statement_to_run, self.cat_node.host, self.cat_node.port, self.cat_node.db_name)
                         self.send_node_sql(statement_to_run, self.cat_node.host, int(self.cat_node.port), self.cat_node.db_name)
                     else:
