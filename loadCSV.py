@@ -22,56 +22,6 @@ cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(insp
 if cmd_subfolder not in sys.path:
     sys.path.insert(0, cmd_subfolder)
 
-
-def test_insert_dtables(sql_driver):
-    insert_dtables = 'insert_dtables.sql'
-    with open(insert_dtables, 'r') as myfile:
-        data=myfile.read().replace('\n', '')
-        # print(__file__ + ': data is ' + data)
-        sql_driver.run_sql(data, sql_driver.cfg_dict['tablename'] + '.db')
-
-def test_create_books(sql_driver):
-    sql = 'create_books.sql'
-    with open(sql, 'r') as myfile:
-        data=myfile.read().replace('\n', '')
-        # print(__file__ + ': data is ' + data)
-        sql_driver.run_sql(data, sql_driver.cfg_dict['tablename'] + '.db')
-
-def test_run(sql_driver):
-    dbname = 'mycatdb.db'
-    tablename = 'dtables'
-    valuename = 'partmtd'
-    where_col = 'nodeid'
-    where_val = 1
-    value = sql_driver.select_value_from_db(dbname, valuename, tablename, where_col, where_val);
-    print('value is: ' + value[1])
-
-def test_get_tablename(sql_filename):
-    g = GetTablename()
-    tablename = g.get_tablename(sql_filename)
-    print('tablename test result is ', tablename)
-
-def test_run_sql():
-    print(__file__, ': test running runSQL.main()')
-    runSQL.main()
-    
-
-def tests(sql_driver):
-    print(__file__,': running tests')
-    test_run_sql()
-#    test_get_tablename('books.sql')
-#    test_create_books(sql_driver)
-#    test_insert_dtables(sql_driver):
-#    test_run(sql_driver)
-
-
-def trim_partmtd(partmtd):
-    if(partmtd.startswith('(') ):
-        partmtd = partmtd.split('(')[1]
-    if(partmtd.endswith(',)\n') ):
-        partmtd= partmtd.split(',)')[0]
-    return partmtd
-
 def main():
     if(len(sys.argv) >= 3):
         try:
