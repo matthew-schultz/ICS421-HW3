@@ -12,7 +12,7 @@ cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( ins
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
-# Use this if you want to include modules from a subfolder
+'''# Use this if you want to include modules from a subfolder
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"antlr-files")))
 if cmd_subfolder not in sys.path:
     sys.path.insert(0, cmd_subfolder)
@@ -20,7 +20,7 @@ if cmd_subfolder not in sys.path:
 # Use this if you want to include modules from a subfolder
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"sql-files")))
 if cmd_subfolder not in sys.path:
-    sys.path.insert(0, cmd_subfolder)
+    sys.path.insert(0, cmd_subfolder)'''
 
 def main():
     if(len(sys.argv) >= 3):
@@ -64,7 +64,6 @@ def main():
                         if(node_id_from_hash in hash_node_dict):
                             #print(str(node_id_from_hash) + ' is in hash_node_dict' + ', part_param1 value is ' + hash_node_dict[node_id_from_hash].part_param1)
                             sql_driver.insert_tuple_into_node_table(hash_node_dict[node_id_from_hash], sql_driver.cfg_dict['tablename'], csv_tuple_list)
-                            #insert_tuple_into_node_table()
                         print('part_param1, part_col_value, node_id_from_hash: ' + str(part_param1) + ',' + str(part_col_value) + ',' + str(node_id_from_hash) )
                     #sql_driver.partition_hash(tuples)
                         #sql_driver.insert_csv_tuples_into_node_table(current_node, 'books', csv_tuples)
