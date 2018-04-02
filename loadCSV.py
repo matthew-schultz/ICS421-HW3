@@ -29,17 +29,11 @@ def main():
             clustercfg = sys.argv[1]
             csvfile = sys.argv[2]
             sql_driver = SQLDriver.SQLDriver(__file__, clustercfg)
-
             #also initializes sql_driver member variables: cat_node, cluster_nodes, cat_node_count
             sql_driver.update_catalog_with_cfg_data()
-
-            # response_list = []
             csv_tuples = sql_driver.get_tuples_from_csv(csvfile)
-
-            
             if 'partition.method' in sql_driver.cfg_dict.keys():
                 partition_method = sql_driver.cfg_dict['partition.method']
-
                 if(partition_method == 'range'):
                     for current_node in sql_driver.cluster_nodes:
                         #get partparams from cfg_dict using nodeid
@@ -56,11 +50,10 @@ def main():
                             else:
                                 print(__file__ +': did not insert csv_tuple ' + str(csv_tuple_list) + ' into node ' + str(current_node.node_id))
                 elif(partition_method == 'hash'):
-                    print('mod value and send if mod matches node num')
+                    #print('mod value and send if mod matches node num')
                     #create a dictionary where keys are node_id's and values are nodes
                     hash_node_dict = sql_driver.get_id_node_dict(sql_driver.cluster_nodes)
-                    print('hash_node_dict is: ' + str(hash_node_dict) )
-
+                    #print('hash_node_dict is: ' + str(hash_node_dict) )
                     for csv_tuple in csv_tuples:
                         csv_tuple_list = sql_driver.get_fields_from_tuple_string(csv_tuple[0])
                         #curr_node_id = str(current_node.node_id)
@@ -69,7 +62,7 @@ def main():
                         #( partcol mod partparam1 ) + 1
                         node_id_from_hash = ( part_col_value % part_param1 ) + 1
                         if(node_id_from_hash in hash_node_dict):
-                            print(str(node_id_from_hash) + ' is in hash_node_dict' + ', part_param1 value is ' + hash_node_dict[node_id_from_hash].part_param1)
+                            #print(str(node_id_from_hash) + ' is in hash_node_dict' + ', part_param1 value is ' + hash_node_dict[node_id_from_hash].part_param1)
                             sql_driver.insert_tuple_into_node_table(hash_node_dict[node_id_from_hash], sql_driver.cfg_dict['tablename'], csv_tuple_list)
                             #insert_tuple_into_node_table()
                         print('part_param1, part_col_value, node_id_from_hash: ' + str(part_param1) + ',' + str(part_col_value) + ',' + str(node_id_from_hash) )

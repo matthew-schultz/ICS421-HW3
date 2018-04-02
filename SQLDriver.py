@@ -151,7 +151,7 @@ class SQLDriver:
                 try:
                     if(self.check_catalog_if_node_exists(current_node_num) == '1'):
                         statement_to_run = self.build_catalog_update_statement(current_node_num)
-                        print('''self.caller_file +''' 'statement_to_run, cat_node.host, cat_node.port, cat_node.db_name contents are: ',statement_to_run, self.cat_node.host, self.cat_node.port, self.cat_node.db_name)
+                        #print('''self.caller_file +''' 'statement_to_run, cat_node.host, cat_node.port, cat_node.db_name contents are: ',statement_to_run, self.cat_node.host, self.cat_node.port, self.cat_node.db_name)
                         self.send_node_sql(statement_to_run, self.cat_node.host, int(self.cat_node.port), self.cat_node.db_name)
                     else:
                         raise NodeNumMismatchError(self.caller_file +': NodeNumMismatchError node with nodeid:' + str(current_node_num) + ' was not found in catalog', None)
@@ -207,11 +207,6 @@ class SQLDriver:
             #null fields and end
             statement += 'partparam2=NULL'
             statement += ' where nodeid=' + str(current_node_num) + ';'            
-        return statement
-
-
-    def build_catalog_insert_statement(self, node_num):
-        statement = 'insert dtables'
         return statement
 
 #return string '1' if row for node exists, return '0' if it does not
@@ -304,11 +299,6 @@ class SQLDriver:
         return fields
         
 
-    '''def compare_num_nodes_partitions(self):
-        if(cfg_dict['numnodes'] != cfg_dict[]):
-            print('')
-'''            # throw error
-
     def get_nodes_from_tuples(self, node_tuples):
         nodes = []
         i = 1
@@ -337,7 +327,7 @@ class SQLDriver:
         for sql_tuple in tuples:
             # insert = self.insert_tuple(self.cfg_dict['tablename'], sql_tuple)
             insert_sql = 'INSERT into ' + self.cfg_dict['tablename'] + ' VALUES(' + sql_tuple[0] + ');'
-            print('insert is ',insert_sql)
+            print(': insert is ',insert_sql)
             # print('idx is ' + str(idx))
 
     #tuple must be a list of values in a row in the given table; builds a sql insert statement            
@@ -351,7 +341,7 @@ class SQLDriver:
         insert_sql += ');'
         #node.host, node.port, node.db_name
         self.send_node_sql(insert_sql, node.host, int(node.port), node.db_name)
-        print('insert_sql is ' + insert_sql)
+        print(self.caller_file + ': insert_sql is ' + insert_sql)
         return insert_sql
 
     def insert_csv_tuples_into_node_table(self, node, table_name, csv_tuples):
