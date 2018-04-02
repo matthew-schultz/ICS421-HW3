@@ -1,0 +1,14 @@
+# !/bin/bash
+# echo "meat"
+sqlite3 -batch $1 <<"EOF"
+CREATE TABLE IF not exists 
+books(
+book_id int,
+bookname char(64), 
+book_author chart(64));
+
+EOF
+
+echo ${BASH_ARGV[0]}
+# delete database file that was created
+# rm ${BASH_ARGV[0]}
