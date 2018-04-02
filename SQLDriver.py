@@ -358,7 +358,13 @@ class SQLDriver:
         for csv_tuple in csv_tuples:
             print('csv_tuple is: ' + str(csv_tuple) )
             self.insert_tuple_into_node_table(node, table_name, csv_tuple)
-        
+    
+    #return a dictionary with node id's as keys and ClusterDbNodes as values
+    def get_id_node_dict(self, cluster_nodes):
+        hash_node_dict = {}
+        for cluster_node in cluster_nodes:
+            hash_node_dict[cluster_node.node_id] = cluster_node
+        return hash_node_dict
 
     def get_cat_node_from_cfg(self):
         cat_dbname = self.cfg_dict['catalog.db']
