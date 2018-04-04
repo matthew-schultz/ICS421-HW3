@@ -1,0 +1,9 @@
+# !/bin/bash
+# echo "meat"
+#sqlite3 -batch $1 <<"EOF"
+rm test1catdb
+
+
+# echo ${BASH_ARGV[0]}
+# delete database file that was created
+# rm ${BASH_ARGV[0]}

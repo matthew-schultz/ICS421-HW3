@@ -1,7 +1,6 @@
 # !/bin/bash
 # echo "meat"
-#sqlite3 -batch $1 <<"EOF"
-sqlite3 test1catdb << EOF
+sqlite3 newdatabase.db << EOF
 DROP TABLE IF EXISTS dtables;
 CREATE TABLE dtables(tname char(32), 
    nodedriver char(64), 
@@ -14,7 +13,10 @@ CREATE TABLE dtables(tname char(32),
    partparam1 char(32),
    partparam2 char(32));
 EOF
+# sqlite3 -batch $1 <<"EOF"
+# DROP TABLE IF EXISTS books;
+# EOF
 
-# echo ${BASH_ARGV[0]}
+#echo ${BASH_ARGV[0]}
 # delete database file that was created
 # rm ${BASH_ARGV[0]}
