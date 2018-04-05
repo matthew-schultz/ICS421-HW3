@@ -1,9 +1,9 @@
 # !/bin/bash
 # echo "meat"
-#sqlite3 -batch $1 <<"EOF"
-rm test1catdb
+sqlite3 test1catdb "PRAGMA table_info(dtables);"
+# rm test1catdb
 
-
+# SELECT name FROM sqlite_master WHERE type='table' AND name='dtables';
 # echo ${BASH_ARGV[0]}
 # delete database file that was created
 # rm ${BASH_ARGV[0]}
