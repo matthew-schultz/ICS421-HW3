@@ -65,7 +65,13 @@ def load_csv(clustercfg, csvfile, sql_driver):
     except SQLDriver.NodeNumMismatchError as e:
         print(__file__ + ': ' + str(e) )
 
-
+def sql_is_create(sql):
+    isInsert = False
+    # remove leading whitespace from sql string and split
+    sqlArray = sql.lstrip().split(" ")
+    if sqlArray[0].upper() == 'CREATE':
+        isInsert = True
+    return isInsert
 
 def main():
     if(len(sys.argv) >= 3):
@@ -73,6 +79,14 @@ def main():
         sql_driver = SQLDriver(__file__, clustercfg)
 
         #if the config file contains tablename, second commandline argument is treated as the csv file.
+        input_file_name = sys.argv[2]
+        input_file_string = ''
+        with open(input_file_name, 'r') as myfile:
+            input_file_string = myfile.read().replace('\n', '')
+        print('input_file_string is: '+ input_file_string)
+
+        #if(sql_is_create(input_file_string) ):
+        #    print('execute runDDL')
         if('tablename' in sql_driver.cfg_dict):
             print('load csv file')
             csvfile = sys.argv[2]

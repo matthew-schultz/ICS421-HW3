@@ -360,7 +360,8 @@ class SQLDriver:
         cat_dbname = self.cfg_dict['catalog.db']
         cat_host = self.cfg_dict['catalog.hostname']
         cat_port = self.cfg_dict['catalog.port']        
-        cat_node = ClusterDbNode(db_name=cat_dbname, host="172.17.0.2", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='112')
+        #cat_node = ClusterDbNode(db_name=cat_dbname, host="172.17.0.2", port="5000", part_col='id', part_param1='1', part_param2='2', part_mtd='99', node_id='112')
+        cat_node = ClusterDbNode(db_name=cat_dbname, host=cat_host, port=cat_port)
         '''print('cat_dbname is: ',cat_dbname)
         print('cat_host is: ',cat_host)
         print('cat_port is: ',cat_port)

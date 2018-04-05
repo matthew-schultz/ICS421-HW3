@@ -1,5 +1,4 @@
 # !/bin/bash
-# echo "meat"
 sqlite3 newdatabase.db << EOF
 DROP TABLE IF EXISTS dtables;
 CREATE TABLE dtables(tname char(32), 

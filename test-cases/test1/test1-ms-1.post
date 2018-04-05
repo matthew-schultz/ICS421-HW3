@@ -1,7 +1,10 @@
 # !/bin/bash
 # echo "meat"
-sqlite3 test1catdb "PRAGMA table_info(dtables);"
-# rm test1catdb
+sqlite3 test1db "PRAGMA table_info(books);"
+sqlite3 test2db "PRAGMA table_info(books);"
+rm test1catdb
+rm test1db
+rm test2db
 
 # SELECT name FROM sqlite_master WHERE type='table' AND name='dtables';
 # echo ${BASH_ARGV[0]}
