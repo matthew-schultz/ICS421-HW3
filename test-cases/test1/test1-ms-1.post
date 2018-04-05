@@ -2,9 +2,9 @@
 # echo "meat"
 sqlite3 test1db "PRAGMA table_info(books);"
 sqlite3 test2db "PRAGMA table_info(books);"
-rm test1catdb
-rm test1db
-rm test2db
+rm -f test1catdb
+rm -f test1db1
+rm -f test1db2
 
 # SELECT name FROM sqlite_master WHERE type='table' AND name='dtables';
 # echo ${BASH_ARGV[0]}
