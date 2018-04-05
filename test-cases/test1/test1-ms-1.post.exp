@@ -1,10 +1,6 @@
-0|tname|char(32)|0||0
-1|nodedriver|char(64)|0||0
-2|nodeurl|char(128)|0||0
-3|nodeuser|char(16)|0||0
-4|nodepasswd|char(16)|0||0
-5|partmtd|int|0||0
-6|nodeid|int|0||0
-7|partcol|char(32)|0||0
-8|partparam1|char(32)|0||0
-9|partparam2|char(32)|0||0
+0|book_id|int|0||0
+0|book_id|int|0||0
+1|bookname|char(64)|0||0
+1|bookname|char(64)|0||0
+2|book_author|chart(64)|0||0
+2|book_author|chart(64)|0||0

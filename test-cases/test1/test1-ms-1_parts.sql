@@ -1,0 +1,9 @@
+ CREATE TABLE P
+  (
+	PNUM int NOT NULL PRIMARY KEY,
+	PNAME varchar(18) NOT NULL,
+	COLOR varchar(10) NOT NULL,
+	WEIGHT decimal(4,1) NOT NULL,
+	CITY varchar(20) NOT NULL,
+	UNIQUE (PNAME, COLOR, CITY)
+  );

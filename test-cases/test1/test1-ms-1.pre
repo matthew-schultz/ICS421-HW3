@@ -15,5 +15,5 @@ CREATE TABLE dtables(tname char(32),
    partparam2 char(32));
 INSERT INTO dtables VALUES('books', '', '127.0.0.1:50001/test1db1', '', '', 0, 1, '', '', '');
 INSERT INTO dtables VALUES('books', '', '127.0.0.1:50002/test1db2', '', '', 0, 2, '', '', '');"
-sqlite3 test1db "DROP TABLE IF EXISTS books;"
-sqlite3 test2db "DROP TABLE IF EXISTS books;"
+sqlite3 test1db1 "DROP TABLE IF EXISTS books;"
+sqlite3 test1db2 "DROP TABLE IF EXISTS books;"
