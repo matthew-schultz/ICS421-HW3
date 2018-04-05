@@ -1,12 +1,6 @@
 # !/bin/bash
-# echo "meat"
 sqlite3 test1db1 "PRAGMA table_info(books);"
 sqlite3 test1db2 "PRAGMA table_info(books);"
 rm -f test1catdb
 rm -f test1db1
 rm -f test1db2
-
-# SELECT name FROM sqlite_master WHERE type='table' AND name='dtables';
-# echo ${BASH_ARGV[0]}
-# delete database file that was created
-# rm ${BASH_ARGV[0]}
