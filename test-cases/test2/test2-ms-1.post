@@ -1,6 +1,6 @@
 # !/bin/bash
-#sqlite3 test2db1 "SELECT * FROM books;"
-#sqlite3 test2db2 "SELECT * FROM books;"
+sqlite3 test2db1 "SELECT * FROM books;"
+sqlite3 test2db2 "SELECT * FROM books;"
 rm -f test2catdb
 rm -f test2db1
 rm -f test2db2
