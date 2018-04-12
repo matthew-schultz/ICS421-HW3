@@ -1,0 +1,6 @@
+0|book_id|int|0||0
+0|book_id|int|0||0
+1|bookname|char(64)|0||0
+1|bookname|char(64)|0||0
+2|book_author|chart(64)|0||0
+2|book_author|chart(64)|0||0
