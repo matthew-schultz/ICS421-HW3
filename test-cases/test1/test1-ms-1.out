@@ -1,18 +1,8 @@
-('127.0.0.1:50002/test1db2', 0, 2, '', '', '')
- from host 127.0.0.1
 input_file_string is: CREATE TABLE IF not exists books(book_id int,bookname char(64), book_author chart(64));
+Number of processes must be at least 1
 run sql file
 runSQL.py: config file "test-cases/test1/test1-ms-1.cfg" read successfully
 runSQL.py: connecting to host 127.0.0.1
-runSQL.py: connecting to host 127.0.0.1
-runSQL.py: connecting to host 127.0.0.1
+runSQL.py: failed to connect to host 127.0.0.1
 runSQL.py: reading config file "test-cases/test1/test1-ms-1.cfg"
-runSQL.py: recv msg success from host 127.0.0.1
-runSQL.py: recv msg success from host 127.0.0.1
-runSQL.py: recv msg success from host 127.0.0.1
-runSQL.py: recv sql rows('127.0.0.1:50001/test1db1', 0, 1, '', '', '')
-runSQL.py: recv sql rows from host 127.0.0.1
-runSQL.py: recv sql rows from host 127.0.0.1
-runSQL.py: send pickled data_array "[test1catdb, select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from dtables]"
-runSQL.py: send pickled data_array "[test1db1, CREATE TABLE IF not exists books(book_id int,bookname char(64), book_author chart(64));]"
-runSQL.py: send pickled data_array "[test1db2, CREATE TABLE IF not exists books(book_id int,bookname char(64), book_author chart(64));]"
+The catalog table may have <1 rows; >=1 rows are required
