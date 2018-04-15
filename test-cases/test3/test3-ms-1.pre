@@ -1,0 +1,26 @@
+# !/bin/bash
+# # ##run parDBd.py listeners##
+# python3 parDBd.py localhost 50001 &
+# python3 parDBd.py localhost 50002 &
+sqlite3 test3catdb "DROP TABLE IF EXISTS dtables;
+CREATE TABLE dtables(tname char(32), 
+   nodedriver char(64), 
+   nodeurl char(128), 
+   nodeuser char(16), 
+   nodepasswd char(16), 
+   partmtd int, 
+   nodeid int, 
+   partcol char(32), 
+   partparam1 char(32),
+   partparam2 char(32));
+INSERT INTO dtables VALUES('books', '', '127.0.0.1:50001/test3db1', '', '', 0, 1, '', '', '');
+INSERT INTO dtables VALUES('books', '', '127.0.0.1:50002/test3db2', '', '', 0, 2, '', '', '');"
+sqlite3 test3db1 "DROP TABLE IF EXISTS books;
+CREATE TABLE IF not exists books(book_id int, bookname char(64), book_author char(64) );
+INSERT INTO books VALUES(100000009,'Database Systems_all9','Ramakrishnan,Raghu'),(
+100000010,'Operating Systems_all9','Silberstein, Adam')"
+
+sqlite3 test3db2 "DROP TABLE IF EXISTS books;
+CREATE TABLE IF not exists books(book_id int, bookname char(64), book_author char(64) );
+INSERT INTO books VALUES(100000009,'Database Systems_all9','Ramakrishnan,Raghu'),(
+100000010,'Operating Systems_all9','Silberstein, Adam')"
