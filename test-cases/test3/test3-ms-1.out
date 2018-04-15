@@ -1,0 +1,36 @@
+runSQL.py: reading config file "test-cases/test3/test3-ms-1.cfg"
+runSQL.py: config file "test-cases/test3/test3-ms-1.cfg" read successfully
+input_file_string is: SELECT * FROM books;
+load csv file
+runSQL.py: executing runSQL.load_csv
+runSQL.py: connecting to host 127.0.0.1
+runSQL.py: send pickled data_array "[test3catdb, select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from dtables]"
+runSQL.py: recv msg success from host 127.0.0.1
+runSQL.py: recv sql rows('127.0.0.1:50001/test3db1', 0, 1, '', '', '')
+('127.0.0.1:50002/test3db2', 0, 2, '', '', '')
+ from host 127.0.0.1
+runSQL.py: executing sql statement SELECT EXISTS(SELECT 1 FROM dtables WHERE nodeid=1)
+runSQL.py: connecting to host 127.0.0.1
+runSQL.py: send pickled data_array "[test3catdb, update dtables set tname="books",partmtd=0,partparam1=NULL, partparam2=NULL, partcol=NULL where nodeid=1;]"
+runSQL.py: recv msg success from host 127.0.0.1
+runSQL.py: recv sql rows from host 127.0.0.1
+runSQL.py: updating catalog node 1 with sql statement update dtables set tname="books",partmtd=0,partparam1=NULL, partparam2=NULL, partcol=NULL where nodeid=1;
+runSQL.py: executing sql statement SELECT EXISTS(SELECT 1 FROM dtables WHERE nodeid=2)
+runSQL.py: connecting to host 127.0.0.1
+runSQL.py: send pickled data_array "[test3catdb, update dtables set tname="books",partmtd=0,partparam1=NULL, partparam2=NULL, partcol=NULL where nodeid=2;]"
+runSQL.py: recv msg success from host 127.0.0.1
+runSQL.py: recv sql rows from host 127.0.0.1
+runSQL.py: updating catalog node 2 with sql statement update dtables set tname="books",partmtd=0,partparam1=NULL, partparam2=NULL, partcol=NULL where nodeid=2;
+send to every node
+csv_tuple is: ['SELECT * FROM books;']
+runSQL.py: connecting to host 127.0.0.1
+runSQL.py: send pickled data_array "[test3db1, INSERT into books VALUES(SELECT * FROM books;);]"
+runSQL.py: recv msg failure from host 127.0.0.1
+runSQL.py: recv sql rows from host 127.0.0.1
+runSQL.py: insert_sql is INSERT into books VALUES(SELECT * FROM books;);
+csv_tuple is: ['SELECT * FROM books;']
+runSQL.py: connecting to host 127.0.0.1
+runSQL.py: send pickled data_array "[test3db2, INSERT into books VALUES(SELECT * FROM books;);]"
+runSQL.py: recv msg failure from host 127.0.0.1
+runSQL.py: recv sql rows from host 127.0.0.1
+runSQL.py: insert_sql is INSERT into books VALUES(SELECT * FROM books;);
