@@ -3,10 +3,16 @@ import multiprocessing
 import pickle
 import socket
 import sqlite3
-import sys
+import os, sys, inspect
 from SQLDriver import SQLDriver
 from ClusterDbNode import ClusterDbNode
+from IsSelect import IsSelect
 # import Error
+
+# Use this if you want to include modules from a subfolder
+cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"antlr-files")))
+if cmd_subfolder not in sys.path:
+    sys.path.insert(0, cmd_subfolder)
 
 def load_csv(clustercfg, csvfile, sql_driver):
     try:
@@ -66,7 +72,9 @@ def load_csv(clustercfg, csvfile, sql_driver):
         print(__file__ + ': ' + str(e) )
 
 def sql_is_select_from_on_inner_join_where(sql):
-    isSelect = False
+    #isSelect = True
+    #isSelect = False
+    isSelect = IsSelect.is_select(sql)
     return isSelect
 
 def sql_is_create(sql):

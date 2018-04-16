@@ -1,6 +1,7 @@
 ('127.0.0.1:50002/test1db2', 0, 2, '', '', '')
  from host 127.0.0.1
 input_file_string is: CREATE TABLE IF not exists books(book_id int,bookname char(64), book_author chart(64));
+not a join select statement
 run sql file
 runSQL.py: config file "test-cases/test1/test1-ms-1.cfg" read successfully
 runSQL.py: connecting to host 127.0.0.1

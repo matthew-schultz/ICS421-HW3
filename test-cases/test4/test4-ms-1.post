@@ -1,0 +1,7 @@
+# !/bin/bash
+sqlite3 test4db1 "SELECT * FROM books;"
+sqlite3 test4db1 "SELECT * FROM authors;"
+sqlite3 test4db2 "SELECT * FROM books;"
+rm -f test4catdb
+rm -f test4db1
+rm -f test4db2

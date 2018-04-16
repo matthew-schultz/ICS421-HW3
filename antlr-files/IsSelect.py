@@ -11,7 +11,7 @@ class IsSelect() :
     def __init__(self):
         print()
 
-    def is_select(self, filename):
+    def is_select(filename):
         input = FileStream(filename)
         lexer = SQLiteLexer(input)
         stream = CommonTokenStream(lexer)
@@ -21,6 +21,7 @@ class IsSelect() :
         SQLite = IsSelectSQLiteListener()
         walker = ParseTreeWalker()
         walker.walk(SQLite, tree)
+        print('aaaaaaaaaaaa',SQLite.isSelect)
         return SQLite.isSelect
 '''
     def main(argv):
