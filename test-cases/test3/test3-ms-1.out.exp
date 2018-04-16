@@ -5,6 +5,7 @@
  from host 127.0.0.1
  from host 127.0.0.1
 input_file_string is: SELECT * FROM books;
+not a join select statement
 run sql file
 runSQL.py: config file "test-cases/test3/test3-ms-1.cfg" read successfully
 runSQL.py: connecting to host 127.0.0.1

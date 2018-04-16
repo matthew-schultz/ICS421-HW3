@@ -6,7 +6,11 @@ test-cases/test4/test4-ms-1.pre
 python3 runSQL.py test-cases/test4/test4-ms-1.cfg test-cases/test4/test4-ms-1.sql > test-cases/test4/test4-ms-1.out
 test-cases/test4/test4-ms-1.post #| sort > test-cases/test4/test4-ms-1.post.out
 #DIFF=$(diff test-cases/test4/test4-ms-1.out test-cases/test4/test4-ms-1.out.exp)
-if [ "$DIFF" != "" ] 
+
+if [ ! -f test-cases/test4/test4-ms-1.out.exp ]
+then
+    echo "File test-cases/test4/test4-ms-1.out.exp not found!"
+elif [ "$DIFF" != "" ] 
 then
     echo "Test failed; output file did not match"
     echo $DIFF

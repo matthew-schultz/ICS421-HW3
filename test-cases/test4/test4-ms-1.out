@@ -1,20 +1,5 @@
 runSQL.py: reading config file "test-cases/test4/test4-ms-1.cfg"
 runSQL.py: config file "test-cases/test4/test4-ms-1.cfg" read successfully
-input_file_string is: SELECT * FROM authors;
+input_file_string is: SELECT * FROM books INNER JOIN authors ON books.book_author = author.authorname;
 run sql file
-aaaaaaaaaaaa False
-not a join select statement
-runSQL.py: connecting to host 127.0.0.1
-runSQL.py: send pickled data_array "[test4catdb, select nodeurl,partmtd,nodeid,partcol,partparam1,partparam2 from dtables]"
-runSQL.py: recv msg success from host 127.0.0.1
-runSQL.py: recv sql rows('127.0.0.1:50001/test4db1', 0, 1, '', '', '')
-('127.0.0.1:50002/test4db2', 0, 2, '', '', '')
- from host 127.0.0.1
-runSQL.py: connecting to host 127.0.0.1
-runSQL.py: send pickled data_array "[test4db2, SELECT * FROM authors;]"
-runSQL.py: recv msg failure from host 127.0.0.1
-runSQL.py: recv sql rows from host 127.0.0.1
-runSQL.py: connecting to host 127.0.0.1
-runSQL.py: send pickled data_array "[test4db1, SELECT * FROM authors;]"
-runSQL.py: recv msg success from host 127.0.0.1
-runSQL.py: recv sql rows from host 127.0.0.1
+is a join statement

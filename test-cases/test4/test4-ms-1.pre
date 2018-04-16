@@ -17,9 +17,15 @@ INSERT INTO dtables VALUES('books', '', '127.0.0.1:50001/test4db1', '', '', 0, 1
 INSERT INTO dtables VALUES('books', '', '127.0.0.1:50002/test4db2', '', '', 0, 2, '', '', '');"
 sqlite3 test4db1 "DROP TABLE IF EXISTS books;
 CREATE TABLE IF not exists books(book_id int, bookname char(64), book_author char(64) );
-INSERT INTO books VALUES(100000009,'Database Systems_all9','Ramakrishnan,Raghu'),(
-100000010,'Operating Systems_all9','Silberstein, Adam');
-CREATE TABLE IF not exists authors(author_id int, authorname char(64), author_birthday date);"
+INSERT INTO books VALUES(100000009,'Database Systems','Ramakrishnan,Raghu'),
+(100000010,'The Invisible Man','Wells, H.G.'),
+(100000011,'Becoming Wise','Tippett, Krista');
+CREATE TABLE IF not exists authors(author_id int, authorname char(64), birthday date);
+INSERT INTO authors VALUES(2, 'Wells, H.G.', '1866-09-21'),
+(3, 'Ramakrishnan,Raghu', '1961-12-02'),
+(4, 'Tippett, Krista', '1960-11-09'),
+(5, 'Dash, Anil', '1975-09-05');
+"
 
 sqlite3 test4db2 "DROP TABLE IF EXISTS books;
 CREATE TABLE IF not exists books(book_id int, bookname char(64), book_author char(64) );

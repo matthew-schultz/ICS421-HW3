@@ -14,10 +14,10 @@ class IsSelectSQLiteListener(SQLiteListener) :
     #    print("exitTable_name")
 
     # Enter a parse tree produced by SQLiteParser#Select_stmtContext.
-    def enterIsSelect(self, ctx:SQLiteParser.Select_coreContext):
+    def enterIsSelect(self, ctx:SQLiteParser.Select_stmtContext):
         self.isSelect = True
 
     # Exit a parse tree produced by SQLiteParser#Select_stmtContext.
-    def exitIsSelect(self, ctx:SQLiteParser.Select_coreContext):
+    def exitIsSelect(self, ctx:SQLiteParser.Select_stmtContext):
         print("exitIsSelect")
         self.isSelect = True

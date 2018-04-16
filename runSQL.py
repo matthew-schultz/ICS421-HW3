@@ -71,10 +71,21 @@ def load_csv(clustercfg, csvfile, sql_driver):
     except SQLDriver.NodeNumMismatchError as e:
         print(__file__ + ': ' + str(e) )
 
-def sql_is_select_from_on_inner_join_where(sql):
+def sql_is_select_from_on_inner_join_where(sql_filename):
     #isSelect = True
-    #isSelect = False
-    isSelect = IsSelect.is_select(sql)
+
+    print ('sql_is_select_from_on_inner_join_where sql_filename is ' + sql_filename)
+    isSelect = IsSelect.is_select(sql_filename)
+
+    return isSelect
+
+def sql_is_dist_join(sql):
+    isSelect = True
+    sql = sql.upper()
+    sql_terms = ['SELECT', 'FROM', 'ON', 'INNER JOIN']
+    for sql_term in sql_terms:
+        if sql_term not in sql:
+            isSelect = False
     return isSelect
 
 def sql_is_create(sql):
@@ -107,14 +118,13 @@ def main():
         else:
             print('run sql file')
             node_sql = sys.argv[2]
-            if( sql_is_select_from_on_inner_join_where(node_sql) is False):
+            with open(node_sql, 'r') as myfile:
+                node_sql = myfile.read().replace('\n', '')
+
+#            if( sql_is_select_from_on_inner_join_where(sys.argv[2]) is False):
+            if( sql_is_dist_join(node_sql) is False):
                 print('not a join select statement')
-
-
-                #read sql file as string to be executed on each node using sql_driver.multiprocess_node_sql()
-                with open(node_sql, 'r') as myfile:
-                    node_sql = myfile.read().replace('\n', '')
-
+                #node_sql is a string with a sql statement to be executed on each node using sql_driver.multiprocess_node_sql()
                 cat_node = sql_driver.get_cat_node_from_cfg()
                 cat_node_string = sql_driver.get_node_string_from_cat(cat_node)
                 cat_node_tuples = sql_driver.get_tuples_from_csv_string(cat_node_string)
