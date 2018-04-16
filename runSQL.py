@@ -65,6 +65,10 @@ def load_csv(clustercfg, csvfile, sql_driver):
     except SQLDriver.NodeNumMismatchError as e:
         print(__file__ + ': ' + str(e) )
 
+def sql_is_select_from_on_inner_join_where(sql):
+    isSelect = False
+    return isSelect
+
 def sql_is_create(sql):
     isInsert = False
     # remove leading whitespace from sql string and split
@@ -95,16 +99,21 @@ def main():
         else:
             print('run sql file')
             node_sql = sys.argv[2]
+            if( sql_is_select_from_on_inner_join_where(node_sql) is False):
+                print('not a join select statement')
 
-            #read sql file as string to be executed on each node using sql_driver.multiprocess_node_sql()
-            with open(node_sql, 'r') as myfile:
-                node_sql = myfile.read().replace('\n', '')
 
-            cat_node = sql_driver.get_cat_node_from_cfg()
-            cat_node_string = sql_driver.get_node_string_from_cat(cat_node)
-            cat_node_tuples = sql_driver.get_tuples_from_csv_string(cat_node_string)
-            cluster_nodes = sql_driver.get_nodes_from_tuples(cat_node_tuples)
-            sql_driver.multiprocess_node_sql(cluster_nodes, node_sql)        
+                #read sql file as string to be executed on each node using sql_driver.multiprocess_node_sql()
+                with open(node_sql, 'r') as myfile:
+                    node_sql = myfile.read().replace('\n', '')
+
+                cat_node = sql_driver.get_cat_node_from_cfg()
+                cat_node_string = sql_driver.get_node_string_from_cat(cat_node)
+                cat_node_tuples = sql_driver.get_tuples_from_csv_string(cat_node_string)
+                cluster_nodes = sql_driver.get_nodes_from_tuples(cat_node_tuples)
+                sql_driver.multiprocess_node_sql(cluster_nodes, node_sql)
+            else:
+                print('is a join statement')
     else:
           print(__file__ + ': ERROR need at least 3 arguments to run properly (e.g. \"python3 runSQL.py cfg-files/cluster.cfg sql-files/books.sql\")')
 
